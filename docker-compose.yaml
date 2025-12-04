@@ -9,7 +9,8 @@ services:
     volumes:
       - mlflow-data:/data
     environment:
-      # Coolify magic variables (generates values automatically)
+      # Coolify magic variables - generates URL and routes traffic to port 5000
+      - SERVICE_URL_MLFLOW_5000
       - SERVICE_FQDN_MLFLOW
       - SERVICE_PASSWORD_MLFLOW
       # Use generated password for both
