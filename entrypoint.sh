@@ -15,18 +15,31 @@ EOF
 
 export MLFLOW_AUTH_CONFIG_PATH=/tmp/auth.ini
 
-# Function to update password after server starts
+# Function to update password after server starts (using Python since curl may not exist)
 update_password() {
-    sleep 5  # Wait for server to be ready
+    sleep 8  # Wait for server to be ready
 
-    # Try updating with default password first, then with target password (idempotent)
-    for OLD_PASS in "password1234" "${PASSWORD}"; do
-        curl -s -X PATCH -u "admin:${OLD_PASS}" \
-            "http://localhost:5000/api/2.0/mlflow/users/update-password" \
-            -H "Content-Type: application/json" \
-            -d "{\"username\": \"admin\", \"password\": \"${PASSWORD}\"}" \
-            2>/dev/null && echo "Password synced." && break
-    done
+    python3 << PYTHON
+import requests
+import sys
+
+password = "${PASSWORD}"
+url = "http://localhost:5000/api/2.0/mlflow/users/update-password"
+headers = {"Content-Type": "application/json"}
+data = {"username": "admin", "password": password}
+
+# Try with default password first
+for old_pass in ["password1234", password]:
+    try:
+        resp = requests.patch(url, json=data, auth=("admin", old_pass), timeout=5)
+        if resp.status_code == 200:
+            print(f"Password synced successfully.")
+            sys.exit(0)
+    except Exception as e:
+        pass
+
+print("Password sync skipped (already set or server not ready).")
+PYTHON
 }
 
 # Run password update in background
