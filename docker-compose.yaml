@@ -3,10 +3,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: mlflow-server
     restart: unless-stopped
-    ports:
-      - "5001:5000"
+    expose:
+      - "5000"
     volumes:
       - mlflow-data:/data
     environment:
