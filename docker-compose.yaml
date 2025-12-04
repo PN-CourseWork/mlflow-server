@@ -9,10 +9,10 @@ services:
     volumes:
       - mlflow-data:/data
     environment:
-      # Coolify auto-generates these (SERVICE_PASSWORD_<NAME> syntax)
+      # Coolify auto-generates SERVICE_PASSWORD_MLFLOW
       - MLFLOW_FLASK_SERVER_SECRET_KEY=${SERVICE_PASSWORD_MLFLOW}
-      - MLFLOW_ADMIN_PASSWORD=${SERVICE_PASSWORD_MLFLOW_64}
-      # Auto-generated FQDN available as SERVICE_FQDN_MLFLOW
+      - MLFLOW_ADMIN_PASSWORD=${SERVICE_PASSWORD_MLFLOW}
+      # Auto-generated FQDN
       - SERVICE_FQDN_MLFLOW
     command: >
       mlflow server
